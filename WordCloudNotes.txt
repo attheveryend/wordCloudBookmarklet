@@ -1,0 +1,67 @@
+javascript:(function (){
+	
+//first I want to read in the visible text of the web page.  I will use the textContent method
+//before I can use textContent, I need to remove the script tags, which would otherwise be picked up by textContent.
+	
+	var pageText;
+	var unwantedNodes = document.querySelectorAll( 'body script' );
+		for( var i=0; i < unwantedNodes.length; i++){
+		unwantedNodes[i].remove();
+		}
+	pageText = document.body.textContent;
+	
+//now that I have the text, I want to split the text into an array of 'words' four letters or longer.
+//I've assumed a word to consist of only alphabetical characters
+//I then sort the array to get it into alphabetical order now.
+	
+	var textArray = pageText.match( /[A-Z][A-Z][A-Z][A-Z]+/gi );
+	textArray.sort();
+	
+	
+//Next I'm going to count word occurrences.  I will store the word and the count of occurrences in a new array.
+//I will iterate through the textArray and add a new word and a count of 1 for each new word, or increment that words count if it already exists in my wordCountArray
+//I can take advantage of the fact that textArray is sorted already:  when a word occurs more than once, those words will be adjacent array elements
+//Meaning that I can be certain that the next element in textArray is a new word if it does not match the last element of wordCountArray.  No searching necessary.
+	
+	var wordCountArray = [ [textArray[0], 0 ] ];
+	
+	textArray.forEach( function( currentValue ){
+			if(wordCountArray[ wordCountArray.length-1 ][0] === currentValue ){
+				wordCountArray[ wordCountArray.length -1 ][1]++;
+			}else{
+				wordCountArray.push( [currentValue, 1] );
+			}
+		}
+	);
+
+//Now I want to begin assembling my word cloud.  First I want to set the font size associated with each word.  I want the font size to have a min and max size.
+//I want to set the font size to be relative to the max value of the word count, so I need to get the max value of my 2D array.
+//i'll use a map to strip off a column of my array and a reduce to find the max of that array.	
+	
+	var wcArrayMax =  wordCountArray.map( arr=>arr[1] ).reduce( (lastmax,currentval) => { return Math.max( lastmax, currentval ) }, 0  );
+
+//Next I create a new DOM element to hold my word array, and give it some styling	
+	
+	var newElement;
+	var divElement = document.createElement('div');
+	divElement.setAttribute( 'style' , 'margin:auto; width:75%; word-wrap:break-word; padding:12px' );
+
+//I use a forEach loop to create a new <span> tag to hold each word in the array, 
+//I set the font size of each tag between 6px and 100px depending on what proportion of the maximum word occurence count.
+//Using the square root function on makes the distribution of word sizes a bit more pleasant on the eyes.
+//then I append each span tag to my containing divider element
+	
+	wordCountArray.forEach( function( currentValue, index, array ){
+		newElement = document.createElement('span');
+		newElement.innerText = ' '+currentValue[0]+' ';
+		newElement.style.fontSize = ''+(Math.floor( Math.sqrt(currentValue[1] / wcArrayMax)*94)+6)+'px';
+		divElement.appendChild(newElement);		
+		}
+	);
+	
+//To finish up, I want to clear the page and append my word cloud.  ta da!
+	
+	document.body.innerHTML='';
+	document.body.appendChild(divElement);
+	
+})();
