@@ -6,7 +6,7 @@ javascript:(function (){
 	var pageText;
 	var unwantedNodes = document.querySelectorAll( 'body script' );
 		for( var i=0; i < unwantedNodes.length; i++){
-		unwantedNodes[i].remove();
+			unwantedNodes[i].remove();
 		}
 	pageText = document.body.textContent;
 	
