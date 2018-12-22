@@ -11,12 +11,13 @@ javascript:(function (){
 	textArray.sort();
 	
 	var wordCountArray = [ [textArray[0], 0 ] ];
-	
+	var lastRow = 0;
 	textArray.forEach( function( currentValue ){
-			if(wordCountArray[ wordCountArray.length-1 ][0] == currentValue  ){
-				wordCountArray[ wordCountArray.length -1 ][1]++;
+			if(wordCountArray[ lastRow ][0] == currentValue  ){
+				wordCountArray[ lastRow ][1]++;
 			}else{
 				wordCountArray.push( [currentValue, 1] );
+				lastRow = wordCountArray.length-1;
 			}
 	});
 	
