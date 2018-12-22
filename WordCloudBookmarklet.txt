@@ -37,11 +37,4 @@ javascript:(function (){
 	document.body.innerHTML='';
 	document.body.appendChild(divElement);
 	
-	pageText=null;
-	textArray=null;
-	wordCountArray = null;
-	wcArrayMax = null;
-	newElement = null;
-	divElement = null;
-	
 })();
