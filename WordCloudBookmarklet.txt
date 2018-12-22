@@ -4,21 +4,21 @@ javascript:(function (){
 		for( var i=0; i < unwantedNodes.length; i++){
 			unwantedNodes[i].remove();
 		}
-	pageText = document.body.textContent;
+	pageText = document.body.textContent.toLowerCase();
 	
-	var textArray = pageText.match( /[A-Z][A-Z][A-Z][A-Z]+/gi );
+	var textArray = pageText.match( /[a-z][a-z][a-z][a-z]+/g );
+	
 	textArray.sort();
 	
 	var wordCountArray = [ [textArray[0], 0 ] ];
 	
 	textArray.forEach( function( currentValue ){
-			if(wordCountArray[ wordCountArray.length-1 ][0] === currentValue ){
+			if(wordCountArray[ wordCountArray.length-1 ][0] == currentValue  ){
 				wordCountArray[ wordCountArray.length -1 ][1]++;
 			}else{
 				wordCountArray.push( [currentValue, 1] );
 			}
-		}
-	);
+	});
 	
 	var wcArrayMax =  wordCountArray.map( arr=>arr[1] ).reduce( (lastmax,currentval) => { return Math.max( lastmax, currentval ) }, 0  );
 	
@@ -26,14 +26,21 @@ javascript:(function (){
 	var divElement = document.createElement('div');
 	divElement.setAttribute( 'style' , 'margin:auto; width:75%; word-wrap:break-word; padding:12px' );
 	
-	wordCountArray.forEach( function( currentValue, index, array ){
+	wordCountArray.forEach( function( currentValue){
 		newElement = document.createElement('span');
-		newElement.innerText = ' '+currentValue[0]+' ';
-		newElement.style.fontSize = ''+(Math.floor( Math.sqrt(currentValue[1] / wcArrayMax)*94)+6)+'px';
+		newElement.innerText =' '+currentValue[0]+' ';
+		newElement.style.fontSize = (Math.floor( Math.sqrt(currentValue[1] / wcArrayMax)*94)+6)+'px';
 		divElement.appendChild(newElement);		
-		}
-	);
+	});
+	
 	document.body.innerHTML='';
 	document.body.appendChild(divElement);
+	
+	pageText=null;
+	textArray=null;
+	wordCountArray = null;
+	wcArrayMax = null;
+	newElement = null;
+	divElement = null;
 	
 })();
